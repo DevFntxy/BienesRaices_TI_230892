@@ -91,7 +91,24 @@ const registrar = async (req, res) => {
     await check('nombre').notEmpty().withMessage('El nombre no puede ir vacio').run(req)
     await check('email').isEmail().withMessage('Eso no parece un email').run(req)
     await check('password').isLength({ min: 6 }).withMessage('El password debe ser de almenos 6 caracteres').run(req)
-    await check('repetir_password').equals(req.body.password).withMessage('Los password no coinciden').run(req)
+    await check('repetpassword').equals(req.body.password).withMessage('Los password no coinciden').run(req)
+    await check('fechaNacimiento')
+    .notEmpty().withMessage('La fecha de nacimiento es obligatoria')
+    .custom((value) => {
+      const hoy = new Date();
+      const fechaNacimiento = new Date(value);
+      
+      // Calcula la diferencia en años entre la fecha de hoy y la fecha de nacimiento
+      const edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+  
+      // Si la diferencia es menor a 18 o si cumple 18 años en el año actual pero aún no ha llegado a su cumpleaños
+      if (edad < 18 || (edad === 18 && hoy < new Date(fechaNacimiento.setFullYear(hoy.getFullYear())))) {
+        throw new Error('Debes ser mayor de 18 años para registrarte');
+      }
+  
+      return true;
+    })
+    .run(req);
 
     let resultado = validationResult(req)
 
