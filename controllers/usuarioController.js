@@ -128,7 +128,7 @@ const registrar = async (req, res) => {
 
     //Extraer los datos
 
-    const { nombre, email, password } = req.body
+    const { nombre, email, password, fechaNacimiento } = req.body
 
     //verificar que el usuario no este duplicado
     const existeUsuario = await Usuario.findOne({ where: { email } })
@@ -149,6 +149,7 @@ const registrar = async (req, res) => {
         nombre,
         email,
         password,
+        fechaNacimiento,
         token: generateID()
     })
 
