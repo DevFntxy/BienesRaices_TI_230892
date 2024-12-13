@@ -159,15 +159,43 @@ const registrar = async (req, res) => {
         email: usuario.email,
         token: usuario.token
     })
+    res.render('auth/agregar-imagen', {
+        csrfToken: req.csrfToken(),
+        //usuarioId: usuario.id
+    });
+    
 
 
-    //Mostrar mensaje de confirmación
-    res.render('templates/message', {
-        pagina: 'Cuenta creada correctamente',
-        mensaje: 'Hemos enviado un email de confirmación, presiona en el enlace'
-    })
 }
-
+const agregarFotoPerfil = async (req, res, next) => {
+    const { usuarioId } = req.body;
+  
+    try {
+      // Validar que usuarioId no esté vacío
+      if (!usuarioId) {
+        return res.status(400).json({ error: "El ID de usuario es requerido." });
+      }
+  
+      const usuario = await Usuario.findByPk(usuarioId);
+  
+      // Validar si el usuario existe
+      if (!usuario) {
+        return res.status(404).json({ error: "Usuario no encontrado." });
+      }
+  
+      // Asignar imagen al usuario
+      usuario.image = req.file ? req.file.filename : "default.jpg";
+  
+      // Guardar cambios en la base de datos
+      await usuario.save();
+  
+      res.redirect(`/mensaje?usuarioId=${usuarioId}`);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Error interno del servidor." });
+    }
+  };
+  
 //Funcion que comprueba una cuenta
 const confirmar = async (req, res) => {
     const { token } = req.params;
@@ -298,8 +326,6 @@ const nuevoPassword = async (req, res) => {
         pagina: 'Password Restablecido',
         mensaje: 'El password se guardo correctamente'
     })
-
-
 }
 
 export {
@@ -312,5 +338,6 @@ export {
     formularioOlvidePassword,
     resetPassword,
     comprobarToken,
-    nuevoPassword
+    nuevoPassword,
+    agregarFotoPerfil
 }

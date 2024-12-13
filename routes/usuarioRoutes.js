@@ -1,27 +1,52 @@
 import express from "express";
-import { formularioLogin, formularioRegistro, registrar, confirmar, formularioOlvidePassword, resetPassword, comprobarToken, nuevoPassword, autenticar, cerrarSesion } from "../controllers/usuarioController.js";
+
+import {
+  formularioLogin,
+  formularioRegistro,
+  registrar,
+  confirmar,
+  formularioOlvidePassword,
+  resetPassword,
+  comprobarToken,
+  nuevoPassword,
+  autenticar,
+  cerrarSesion,
+  agregarFotoPerfil,
+} 
+from "../controllers/usuarioController.js";
+import Usuario from "../models/Usuario.js";
+import upload from "../middleware/subirFotoPerfil.js";
 
 const router = express.Router();
-//Routing
-router.get('/login', formularioLogin);
-router.post('/login', autenticar);
 
-//cerrar sesión 
+router.get("/login", formularioLogin);
+router.post("/login", autenticar);
 
-router.post('/cerrar-sesion', cerrarSesion)
+router.post("/cerrar-sesion", cerrarSesion);
 
-router.get('/registro', formularioRegistro);
-router.post('/registro', registrar);
+router.get("/registro", formularioRegistro);
+router.post("/registro", registrar);
 
-router.get('/confirmar/:token', confirmar)
+router.post("/agregar-imagen", upload.single("fotoperfil"), agregarFotoPerfil);
+router.get("/confirmar/:token", confirmar);
 
-router.get('/olvide-password', formularioOlvidePassword);
-router.post('/olvide-password', resetPassword);
+router.get("/olvide-password", formularioOlvidePassword);
+router.post("/olvide-password", resetPassword);
 
-//Almacena el nuevo password
-router.get('/olvide-password/:token', comprobarToken);
-router.post('/olvide-password/:token', nuevoPassword);
+router.get("/olvide-password/:token", comprobarToken);
+router.post("/olvide-password/:token", nuevoPassword);
 
-
-
-export default router
+router.get("/mensaje", async (req, res) => {
+  const { usuarioId } = req.query;
+  try {
+    const usuario = await Usuario.findByPk(usuarioId);
+    res.render("templates/message", {
+      page: "Cuenta creada correctamente",
+      confirmacion: true,
+      msg: usuario?.email || "Usuario no encontrado",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+export default router;
