@@ -14,6 +14,7 @@ block contenido
         div(class="mt-5 md:flex md:gap-4 md:items-start")
             div(class="md:w-2/3 bg-white shadow rounded-lg") 
                 img(src=`/uploads/${propiedad.imagen}` , alt=`imagen de la propiedad ${propiedad.titulo}`)
+                div.bg-sesniprymary.rounded-lg.text-white.font-semibold.text-md.text-center(class="max-w-24 py-1.5 px-3 absolute top-3 left-3")= propiedad.venta ? 'Se vende' : 'Se renta'
 
                 div(class="px-5 py-10 space-y-5")
                     p= propiedad.descripcion
@@ -67,7 +68,7 @@ block contenido
                                 div(class="space-y-5")
                                     label(for="mensaje") Mensaje 
                                     
-                                    textarea(id="mensaje", name="mensaje" ,class="w-full px-2 py-2 border border-gray-300 rounded-lg shadow placeholder-gray-400" ,placeholder="Coloca tu mensaje aqui")  
+                                    textarea(id="mensaje" name="mensaje" class="w-full px-2 py-2 border border-gray-300 rounded-lg shadow placeholder-gray-400" placeholder="Coloca tu mensaje aqui")  
 
                                     input(type="submit" value="Enviar Mensaje" class="bg-sesniprymary text-white font-bold uppercase text-sm w-full p-2 cursor-pointer")
 
